@@ -21,5 +21,4 @@ https://github.com/Software-testing-course-projects/Reacetario
    
 ## Como ejecutar el backEnd
 1. Clonar el repositorio  
-2. Ir a la carpeta backEnd
-3. Escribir `docker-compose up`
+2. Escribir `docker-compose up`
