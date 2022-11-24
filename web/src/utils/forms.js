@@ -1,7 +1,37 @@
-export function deleteRecipe(index, recipes) {
-  var newRecipes = [...recipes];
-  newRecipes.splice(index, 1);
-  return newRecipes;
+import axios from 'axios';
+export function deleteRecipe(id) {
+  axios
+      .delete("http://localhost:4000/recipes/"+id)
+      .catch(function (error) {
+        console.log(error.toJSON());
+      })
+      .then(
+        async (res) => {
+          return res
+        }
+      );
+}
+
+export function addRecipe(recipe) {
+  const payload = {
+    title: recipe.Title,
+    description: recipe.Description,
+    date: recipe.Date,
+    image: recipe.Image,
+    ingredients: recipe.Ingredients,
+    steps: recipe.Recipe
+  }
+
+  axios
+    .post("http://localhost:4000/recipes", payload)
+    .catch(function (error) {
+      console.log(error.toJSON());
+    })
+    .then(
+      async (res) => {
+        return res.data.message
+      }
+    );
 }
 
 export function fieldChanger(state, event) {
@@ -54,10 +84,4 @@ export function getDate() {
   today = dd + " de " + months[mm] + " del " + yyyy;
 
   return today;
-}
-
-export function addRecipe(recipe, recipes) {
-  var newRecipes = [...recipes];
-  newRecipes.push(recipe);
-  return newRecipes;
 }

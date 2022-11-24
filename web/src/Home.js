@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from 'axios';
 import {
   Paper,
   Container,
@@ -12,7 +13,6 @@ import {
   Fab,
 } from "@mui/material";
 import CardComponent from "./CardComponent";
-import { recipes } from "./Mocks/recipes.js";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import PlayListRemoveIcon from "@mui/icons-material/PlaylistRemove";
 import { styled} from '@mui/material/styles';
@@ -23,6 +23,7 @@ import {
   deleteField,
   getDate,
   addRecipe,
+  getRecipes
 } from "./utils/forms.js";
 
 const style = {
@@ -71,21 +72,39 @@ class Home extends Component {
     open2: false,
     ingredientes: [""],
     pasos: [""],
-    recipes: [...recipes.recipes],
+    recipes: [],
   };
-  handleSubmit(event) {
+  async componentDidMount() {
+    await axios
+    .get("http://localhost:4000/recipes")
+    .catch((err) => console.log(err.toJSON()))
+    .then((res) => {
+      this.setState({ recipes: res.data.message });
+    });
+  }
+
+  async handleSubmit(event) {
     event.preventDefault();
     var newRecipe = {
-      Title: this.state.titulo,
-      Date: getDate(),
-      Description: this.state.descripcion,
-      Image: this.state.image,
-      Ingredients: this.state.ingredientes,
-      Recipe: this.state.pasos,
+      title: this.state.titulo,
+      date: getDate(),
+      description: this.state.descripcion,
+      image: this.state.image,
+      ingredients: this.state.ingredientes,
+      steps: this.state.pasos,
     };
-
-    this.setState({ recipes: addRecipe(newRecipe, this.state.recipes) });
-    this.handleClose();
+      await axios
+    .post("http://localhost:4000/recipes", newRecipe)
+    .catch(function (error) {
+      console.log(error.toJSON());
+    })
+    .then(
+      async (res) => {
+        this.setState({ recipes: res.data.message });
+        this.handleClose();
+      }
+    );
+    
   }
 
   handleDeleteRecipe(e, index) {
