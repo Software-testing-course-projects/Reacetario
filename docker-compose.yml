@@ -1,0 +1,33 @@
+version: "3.3"
+services: # Uses the dockerfile in backEnd
+  backend:
+    build: ./backEnd
+    tty: true
+    container_name: backend_testing
+    volumes:
+    - ./backEnd:/app
+    ports:
+    - "4000:4000"
+    depends_on:
+    - postgres
+  postgres:
+    image: 'postgres:latest'
+    restart: always
+    volumes:
+    - './postgres_data:/var/lib/postgresql/data'
+    environment:
+    - POSTGRES_PASSWORD=pass
+    - POSTGRES_USER=user
+    - POSTGRES_DB=testing
+    ports:
+    - '5432:5432'
+  jenkins:
+    image: jenkins/jenkins:lts
+    privileged: true
+    user: root
+    ports:
+      - 8080:8080
+      - 50000:50000
+    container_name: jenkins
+    depends_on:
+     - backend
