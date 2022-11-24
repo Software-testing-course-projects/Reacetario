@@ -1,17 +1,4 @@
 import axios from 'axios';
-export function deleteRecipe(id) {
-  axios
-      .delete("http://localhost:4000/recipes/"+id)
-      .catch(function (error) {
-        console.log(error.toJSON());
-      })
-      .then(
-        async (res) => {
-          return res
-        }
-      );
-}
-
 export function addRecipe(recipe) {
   const payload = {
     title: recipe.Title,

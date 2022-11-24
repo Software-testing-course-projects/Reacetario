@@ -56,7 +56,7 @@ cur = conn.cursor()
 # CRUD de usuarios
 
 @app.get("/recipes", tags=["recipes"], status_code=200)
-def read_users():
+def get_recipes():
     # execute query
     try:
         cur.execute('SELECT * FROM recipes')
@@ -82,7 +82,7 @@ def read_users():
 
 
 @app.delete("/recipes/{id}", tags=["recipes"], status_code=200)
-def delete_user(id):
+def delete_recipe(id):
     # execute query
     try:
         cur.execute(f'SELECT * FROM recipes WHERE id = %s', (id,))
@@ -90,6 +90,24 @@ def delete_user(id):
         if result:
             cur.execute(f'DELETE FROM recipes WHERE id = %s', (id,))
             conn.commit()
+            cur.execute('SELECT * FROM recipes')
+            # fetch the result
+            result = cur.fetchall()
+
+            # create a list of dictionaries
+            recipes = []
+            for row in result:
+                recipes.append({"id": row[0], "title": row[1], "description": row[2], "date" : row[3], "image": row[4]})
+            
+            # get steps and ingredients
+            for recipe in recipes:
+                cur.execute('SELECT text FROM ingredients WHERE recipe_id = %s', (recipe["id"],))
+                ingredients = cur.fetchall()
+                recipe["ingredients"] = [ingredient[0] for ingredient in ingredients]
+                cur.execute('SELECT text FROM steps WHERE recipe_id = %s', (recipe["id"],))
+                steps = cur.fetchall()
+                recipe["steps"] = [step[0] for step in steps]
+            return {"message": recipes}
         else:
             return {"message": "Recipe not found"}
         # fetch the result
@@ -97,8 +115,6 @@ def delete_user(id):
         print(e)
         cur.execute("ROLLBACK")
         return {"message": "Error deleting recipe"}
-       
-    return {"message": "Se ha borrado el usuario"}
 
 
 
@@ -112,7 +128,7 @@ class Recipe(BaseModel):
 
 
 @app.post("/recipes", status_code=201, tags=["recipes"])
-async def register_user(item: Recipe):
+async def add_recipe(item: Recipe):
     # execute query
     try:
         # check if user exists
@@ -152,6 +168,53 @@ async def register_user(item: Recipe):
             steps = cur.fetchall()
             recipe["steps"] = [step[0] for step in steps]
         return {"message": recipes}
+    except Exception as e:
+        print(e)
+        cur.execute("ROLLBACK")
+        return JSONResponse(status_code=500, content={"message": "Internal server error"})
+
+@app.put("/recipes/{id}", status_code=200, tags=["recipes"])
+async def update_recipe(id, item: Recipe):
+    # execute query
+    try:
+        # check if user exists
+        cur.execute('SELECT * FROM recipes WHERE id = %s',
+                    (id,))
+        result = cur.fetchone()
+        if result:
+            cur.execute('UPDATE recipes SET title = %s, description = %s, image = %s, date = %s WHERE id = %s',
+                        (item.title, item.description, item.image, item.date, id))
+            cur.execute('DELETE FROM ingredients WHERE recipe_id = %s',
+                        (id,))
+            cur.execute('DELETE FROM steps WHERE recipe_id = %s',
+                        (id,))
+            for ingredient in item.ingredients:
+                cur.execute('INSERT INTO ingredients (text, recipe_id) VALUES (%s, %s)',
+                            (ingredient, id))
+            for step in item.steps:
+                cur.execute('INSERT INTO steps (text, recipe_id) VALUES (%s, %s)',
+                            (step, id))
+            conn.commit()
+            cur.execute('SELECT * FROM recipes')
+            # fetch the result
+            result = cur.fetchall()
+
+            # create a list of dictionaries
+            recipes = []
+            for row in result:
+                recipes.append({"id": row[0], "title": row[1], "description": row[2], "date" : row[3], "image": row[4]})
+            
+            # get steps and ingredients
+            for recipe in recipes:
+                cur.execute('SELECT text FROM ingredients WHERE recipe_id = %s', (recipe["id"],))
+                ingredients = cur.fetchall()
+                recipe["ingredients"] = [ingredient[0] for ingredient in ingredients]
+                cur.execute('SELECT text FROM steps WHERE recipe_id = %s', (recipe["id"],))
+                steps = cur.fetchall()
+                recipe["steps"] = [step[0] for step in steps]
+            return {"message": recipes}
+        else:
+            return JSONResponse(status_code=400, content={"message": "Recipe not found"})
     except Exception as e:
         print(e)
         cur.execute("ROLLBACK")

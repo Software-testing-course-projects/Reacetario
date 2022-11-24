@@ -1,4 +1,5 @@
 import * as React from "react";
+import axios from "axios";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -25,7 +26,7 @@ import {
 } from "@mui/material";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import {getDate, fieldChanger, addField, deleteField} from "./utils/forms";
+import { getDate, fieldChanger, addField, deleteField } from "./utils/forms";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -69,15 +70,15 @@ class CardComponent extends React.Component {
     pasos: this.props.recipe.steps,
     recipe: this.props.recipe,
     anchorEl: null,
-    openMenu: false
+    openMenu: false,
   };
 
   handleClick = (event) => {
-    this.setState({anchorEl: event.currentTarget, openMenu: true});
+    this.setState({ anchorEl: event.currentTarget, openMenu: true });
   };
 
   handleCloseMenu = () => {
-    this.setState({anchorEl: null, openMenu: false});
+    this.setState({ anchorEl: null, openMenu: false });
   };
 
   handleExpandClick = () => {
@@ -108,18 +109,24 @@ class CardComponent extends React.Component {
     event.preventDefault();
     this.setState(fieldChanger(this.state, event));
   };
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
-    this.setState({
-      recipe: {
-        title: this.state.titulo,
-        date: getDate(),
-        description: this.state.descripcion,
-        image: this.state.image,
-        ingredients: this.state.ingredientes,
-        recipe: this.state.pasos,
-      },
-    });
+    const newRecipe = {
+      title: this.state.titulo,
+      description: this.state.descripcion,
+      date: this.state.fecha,
+      image: this.state.image,
+      ingredients: this.state.ingredientes,
+      steps: this.state.pasos,
+    };
+    await axios
+      .put("http://localhost:4000/recipes/" + this.state.recipe.id, newRecipe)
+      .catch(function (error) {
+        console.log(error.toJSON());
+      })
+      .then(async (res) => {
+        window.location.reload();
+      });
     this.setState({
       expanded: false,
       expanded2: false,
@@ -133,7 +140,9 @@ class CardComponent extends React.Component {
 
   removeIngredient = (event) => {
     event.preventDefault();
-    this.setState({ ingredientes: deleteField(this.state.ingredientes, event) });
+    this.setState({
+      ingredientes: deleteField(this.state.ingredientes, event),
+    });
   };
 
   addStep = (event) => {
@@ -144,24 +153,28 @@ class CardComponent extends React.Component {
     event.preventDefault();
     this.setState({ pasos: deleteField(this.state.pasos, event) });
   };
-  
+
+  handleDelete = () => {
+    this.props.deleteRecipe(this.props.recipe.id);
+    this.handleCloseMenu();
+  };
+
   render() {
     var recipe = this.state.recipe;
-    console.log(recipe)
     return (
       <>
-      <Menu
-        id="basic-menu"
-        anchorEl={this.state.anchorEl}
-        open={this.state.openMenu}
-        onClose={this.handleCloseMenu}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={this.handleOpen}>Editar</MenuItem>
-        <MenuItem onClick={this.handleCloseMenu}>Borrar</MenuItem>
-      </Menu>
+        <Menu
+          id="basic-menu"
+          anchorEl={this.state.anchorEl}
+          open={this.state.openMenu}
+          onClose={this.handleCloseMenu}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <MenuItem onClick={this.handleOpen}>Editar</MenuItem>
+          <MenuItem onClick={this.handleDelete}>Borrar</MenuItem>
+        </Menu>
         <Card id="Card">
           {/* Cambiar la X por un botón de Delete*/}
           <CardHeader
@@ -217,7 +230,7 @@ class CardComponent extends React.Component {
             <CardContent>
               <Typography paragraph>Ingredientes:</Typography>
               <Typography paragraph>
-                <List sx={{ listStyleType: "disc", pl: 4, color: "black"}}>
+                <List sx={{ listStyleType: "disc", pl: 4, color: "black" }}>
                   {recipe.ingredients.map((ingredient) => (
                     <ListItem sx={{ display: "list-item" }}>
                       <ListItemText primary={ingredient} />
@@ -389,8 +402,8 @@ class CardComponent extends React.Component {
                   sx={{
                     backgroundColor: "#E884A1",
                     "&:hover": {
-                        backgroundColor: "#b94c6c"
-                    }
+                      backgroundColor: "#b94c6c",
+                    },
                   }}
                 >
                   Editar receta

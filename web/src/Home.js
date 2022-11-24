@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from 'axios';
+import axios from "axios";
 import {
   Paper,
   Container,
@@ -14,17 +14,8 @@ import {
 } from "@mui/material";
 import CardComponent from "./CardComponent";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import PlayListRemoveIcon from "@mui/icons-material/PlaylistRemove";
-import { styled} from '@mui/material/styles';
-import {
-  deleteRecipe,
-  fieldChanger,
-  addField,
-  deleteField,
-  getDate,
-  addRecipe,
-  getRecipes
-} from "./utils/forms.js";
+import { styled } from "@mui/material/styles";
+import { fieldChanger, addField, deleteField, getDate } from "./utils/forms.js";
 
 const style = {
   position: "absolute",
@@ -45,22 +36,20 @@ const style = {
 };
 
 const RecipesTextField = styled(TextField)({
-    '& label.Mui-focused': {
-      color: '#E884A1',
-    },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: '#E884A1',
-    },
+  "& label.Mui-focused": {
+    color: "#E884A1",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottomColor: "#E884A1",
+  },
 
-    '& .MuiOutlinedInput-root': {
-      '&:hover fieldset': {
-        
-        
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#E884A1',
-      },
-    },});
+  "& .MuiOutlinedInput-root": {
+    "&:hover fieldset": {},
+    "&.Mui-focused fieldset": {
+      borderColor: "#E884A1",
+    },
+  },
+});
 
 class Home extends Component {
   state = {
@@ -69,18 +58,17 @@ class Home extends Component {
     fecha: "",
     image: "",
     open: false,
-    open2: false,
     ingredientes: [""],
     pasos: [""],
     recipes: [],
   };
   async componentDidMount() {
     await axios
-    .get("http://localhost:4000/recipes")
-    .catch((err) => console.log(err.toJSON()))
-    .then((res) => {
-      this.setState({ recipes: res.data.message });
-    });
+      .get("http://localhost:4000/recipes")
+      .catch((err) => console.log(err.toJSON()))
+      .then((res) => {
+        this.setState({ recipes: res.data.message });
+      });
   }
 
   async handleSubmit(event) {
@@ -93,28 +81,28 @@ class Home extends Component {
       ingredients: this.state.ingredientes,
       steps: this.state.pasos,
     };
-      await axios
-    .post("http://localhost:4000/recipes", newRecipe)
-    .catch(function (error) {
-      console.log(error.toJSON());
-    })
-    .then(
-      async (res) => {
+    await axios
+      .post("http://localhost:4000/recipes", newRecipe)
+      .catch(function (error) {
+        console.log(error.toJSON());
+      })
+      .then(async (res) => {
         this.setState({ recipes: res.data.message });
         this.handleClose();
-      }
-    );
-    
+      });
   }
 
-  handleDeleteRecipe(e, index) {
-    e.preventDefault();
-    this.setState({
-      open2: false,
-      recipes: deleteRecipe(index, this.state.recipes),
-    });
-    this.forceUpdate();
-  }
+  handleDeleteRecipe = async (id) => {
+    console.log(id);
+    await axios
+      .delete("http://localhost:4000/recipes/" + id)
+      .catch(function (error) {
+        console.log(error.toJSON());
+      })
+      .then(async (res) => {
+        window.location.reload();
+      });
+  };
 
   handleFieldChange = (event) => {
     event.preventDefault();
@@ -144,8 +132,6 @@ class Home extends Component {
 
   handleOpen = () => this.setState({ open: true });
 
-  handleOpen2 = () => this.setState({ open2: true });
-
   handleClose = () =>
     this.setState({
       titulo: "",
@@ -157,64 +143,61 @@ class Home extends Component {
       pasos: [""],
     });
 
-  handleClose2 = () =>
-    this.setState({
-      open2: false,
-      ingredientes: [""],
-      pasos: [""],
-    });
-
   render() {
     const open = this.state.open;
-    const open2 = this.state.open2;
+    const recipes = this.state.recipes;
     return (
       <>
         <Box
           sx={{
             margin: 0,
             top: "auto",
-            right: 20,
+            right: 10,
             bottom: 20,
             left: "auto",
             position: "fixed",
           }}
         >
-          <Fab 
-            aria-label="add" 
-            onClick={this.handleOpen2}
+          <Fab
+            aria-label="add"
+            onClick={this.handleOpen}
             sx={{
-                backgroundColor: "#E884A1",
-                "&:hover": {
-                    backgroundColor: "#b94c6c"
-                }
-            }}>
-            <PlayListRemoveIcon />
+              backgroundColor: "#E884A1",
+              "&:hover": {
+                backgroundColor: "#b94c6c",
+              },
+            }}
+          >
+            <PlaylistAddIcon />
           </Fab>
         </Box>
-        <Box
-          sx={{
-            margin: 0,
-            top: "auto",
-            right: 100,
-            bottom: 20,
-            left: "auto",
-            position: "fixed",
-          }}
-        >
-          <Fab 
-            aria-label="add" 
-            onClick={this.handleOpen}     
-            sx={{
-                backgroundColor: "#E884A1",
-                "&:hover": {
-                    backgroundColor: "#b94c6c"
-                }
-            }}>
-                <PlaylistAddIcon />
-          </Fab>
-        </Box>
-        <Container maxWidth id="body" sx={{ minHeight: "60rem", mt: -3}}>
+        <Container maxWidth id="body" sx={{ minHeight: "60rem", mt: -3 }}>
           <Container>
+            <Paper elevation={3} id="Main">
+              <h1 style={{ textAlign: "center" }}>Reacetario</h1>
+              <Divider sx={{ marginTop: "2.45em" }}>Recetas</Divider>
+
+              {/* Pequeño Trucazo para usar el Grid para hacer un pading sin problemas uwu*/}
+
+              <Grid container justifyContent="center">
+                <Grid xs={0.2}></Grid>
+
+                <Grid container spacing={2} xs={11.6}>
+                  {recipes.map((recipe) => (
+                    <Grid item xs={12} sm={6} md={6} lg={4}>
+                      <div key={recipe.id} id={recipe.id} className={"Tarjeta"}>
+                      <CardComponent
+                        recipe={recipe}
+                        deleteRecipe={this.handleDeleteRecipe}
+                      />
+                      </div>
+                    </Grid>
+                  ))}
+                </Grid>
+
+                <Grid xs={0.2}></Grid>
+              </Grid>
+            </Paper>
             <Modal
               open={open}
               onClose={this.handleClose}
@@ -364,8 +347,8 @@ class Home extends Component {
                       sx={{
                         backgroundColor: "#E884A1",
                         "&:hover": {
-                            backgroundColor: "#b94c6c"
-                        }
+                          backgroundColor: "#b94c6c",
+                        },
                       }}
                     >
                       Añadir receta
@@ -374,72 +357,6 @@ class Home extends Component {
                 </Grid>
               </Box>
             </Modal>
-            <Modal
-              open={open2}
-              onClose={this.handleClose2}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Eliminar receta
-                </Typography>
-                <Grid
-                  container
-                  spacing={2}
-                  justify="center"
-                  sx={{ paddingTop: 2 }}
-                >
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-
-                  {this.state.recipes.map((recipe, index) => {
-                    return (
-                      <>
-                        <Grid item xs={10} justify="center">
-                          <Typography>{recipe.Title}</Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                          <Button
-                            fullWidth
-                            variant="outlined"
-                            color="error"
-                            type="submit"
-                            onClick={(e) => this.handleDeleteRecipe(e, index)}
-                          >
-                            -
-                          </Button>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Divider />
-                        </Grid>
-                      </>
-                    );
-                  })}
-                </Grid>
-              </Box>
-            </Modal>
-            <Paper elevation={3} id="Main">
-              <h1 style={{ textAlign: "center" }}>Reacetario</h1>
-              <Divider sx={{ marginTop: "2.45em" }}>Recetas</Divider>
-
-              {/* Pequeño Trucazo para usar el Grid para hacer un pading sin problemas uwu*/}
-
-              <Grid container justifyContent="center">
-                <Grid xs={0.2}></Grid>
-
-                <Grid container spacing={2} xs={11.6}>
-                  {this.state.recipes.map((recipe) => (
-                    <Grid item xs={12} sm={6} md={6} lg={4}>
-                      <CardComponent recipe={recipe} />
-                    </Grid>
-                  ))}
-                </Grid>
-
-                <Grid xs={0.2}></Grid>
-              </Grid>
-            </Paper>
           </Container>
         </Container>
       </>
