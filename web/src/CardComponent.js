@@ -120,7 +120,7 @@ class CardComponent extends React.Component {
       steps: this.state.pasos,
     };
     await axios
-      .put("http://44.211.209.215/recipes/" + this.state.recipe.id, newRecipe)
+      .put("http://44.211.209.215:4000/recipes/" + this.state.recipe.id, newRecipe)
       .catch(function (error) {
         console.log(error.toJSON());
       })
