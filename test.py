@@ -38,7 +38,8 @@ def add_testing(testSetup):
         driver.find_element(By.ID, "AddRecetaButton").click()
 
         time.sleep(2)
-    except:
+    except Exception as e:
+        print(e)
         assert False
 
 def test_add(add_testing):
@@ -56,7 +57,8 @@ def test_add(add_testing):
                 break
         if not found:
             assert False
-    except:
+    except Exception as e:
+        print(e)
         assert False
     
 
@@ -96,7 +98,8 @@ def edit_testing(testSetup):
     
                 time.sleep(4)
                 break
-    except:
+    except Exception as e:
+        print(e)
         assert False
 
 def test_edit(edit_testing):
@@ -107,13 +110,15 @@ def test_edit(edit_testing):
         
         for tarjeta in element:
             if "HotDog italiano" in tarjeta.text:
+                found = True
                 imagen = tarjeta.find_element(By.CLASS_NAME, "Imagen")
                 assert imagen.get_attribute("src") == "https://static.onecms.io/wp-content/uploads/sites/19/2017/06/05/elcompleto.jpg"
                 time.sleep(2)
                 break
         if not found:
             assert False
-    except:
+    except Exception as e:
+        print(e)
         assert False
 
 @pytest.fixture()
@@ -137,7 +142,8 @@ def delete_testing(testSetup):
                 menu.find_element(By.ID, "BorrarBoton").click()
 
                 time.sleep(4)
-    except:
+    except Exception as e:
+        print(e)
         assert False
 
 
@@ -149,5 +155,6 @@ def test_delete(delete_testing):
         for tarjeta in element:
             assert "HotDog italiano" not in tarjeta.text
             time.sleep(2)
-    except:
+    except Exception as e:
+        print(e)
         assert False
