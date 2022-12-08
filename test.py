@@ -13,7 +13,7 @@ def testSetup():
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     global driver
     driver = webdriver.Chrome(options=options)
-    driver.get(URL_LOCAL)
+    driver.get(URL)
 
     yield
 
@@ -29,36 +29,89 @@ def add_testing(testSetup):
     # Testing Add Receta
 
 
-    driver.find_element(By.ID, "titulo").send_keys("Exo del Destiny" + Keys.ENTER)
-    driver.find_element(By.ID, "descripcion").send_keys("webdriver" + Keys.ENTER)
-    driver.find_element(By.ID, "image").send_keys("https://d.furaffinity.net/art/twistedbones/1667661408/1667661408.twistedbones_ic9n_butcher.png" + Keys.ENTER)
-    driver.find_element(By.NAME, "paso").send_keys("webdriver1" + Keys.ENTER)
-    driver.find_element(By.NAME, "ingrediente").send_keys("webdriver1" + Keys.ENTER)
+    driver.find_element(By.ID, "titulo").send_keys("Completo italiano" + Keys.ENTER)
+    driver.find_element(By.ID, "descripcion").send_keys("Completito" + Keys.ENTER)
+    driver.find_element(By.ID, "image").send_keys("https://upload.wikimedia.org/wikipedia/commons/e/e0/Completo_italiano.jpg" + Keys.ENTER)
+    driver.find_element(By.NAME, "ingrediente").send_keys("Un completo" + Keys.ENTER)
+    driver.find_element(By.NAME, "paso").send_keys("Hacer un completo" + Keys.ENTER)
     driver.find_element(By.ID, "AddRecetaButton").click()
 
     time.sleep(2)
 
 def test_add(add_testing):
+    time.sleep(5)
 
     element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
+    found = False
     for tarjeta in element:
-        if "Exo del Destiny" in tarjeta.text:
-            assert "Exo del Destiny" in tarjeta.text
+        if "Completo italiano" in tarjeta.text:
+            found = True
+            imagen = tarjeta.find_element(By.CLASS_NAME, "Imagen")
+            assert imagen.get_attribute("src") == "https://upload.wikimedia.org/wikipedia/commons/e/e0/Completo_italiano.jpg"
             time.sleep(2)
             break
+    if not found:
+        assert False
+    
+
+@pytest.fixture()
+def edit_testing(testSetup):
+        elements = driver.find_elements(By.CLASS_NAME, "Tarjeta")
+        for tarjeta in elements:
+            print(f"{tarjeta.text}\n")
+            if "Completo italiano" in tarjeta.text:
+                tarjeta.find_element(By.ID, "MasButton").click()
+    
+                time.sleep(2)
+    
+                menu = driver.find_element(By.ID, "basic-menu")
+    
+                time.sleep(2)
+    
+                menu.find_element(By.ID, "EditarBoton").click()
+    
+                time.sleep(4)
+                driver.find_element(By.ID, "titulo").send_keys(Keys.SHIFT + Keys.UP, Keys.BACKSPACE)
+                driver.find_element(By.ID, "titulo").send_keys("HotDog italiano" + Keys.ENTER)
+                driver.find_element(By.ID, "descripcion").send_keys(Keys.SHIFT +  Keys.ARROW_UP)
+                driver.find_element(By.ID, "descripcion").send_keys(Keys.BACKSPACE)
+                driver.find_element(By.ID, "descripcion").send_keys("HotDog" + Keys.ENTER)
+                driver.find_element(By.ID, "image").send_keys(Keys.SHIFT + Keys.UP)
+                driver.find_element(By.ID, "image").send_keys(Keys.BACKSPACE)
+                driver.find_element(By.ID, "image").send_keys("https://static.onecms.io/wp-content/uploads/sites/19/2017/06/05/elcompleto.jpg" + Keys.ENTER)
+                driver.find_element(By.NAME, "ingrediente").send_keys(Keys.SHIFT + Keys.UP)
+                driver.find_element(By.NAME, "ingrediente").send_keys(Keys.BACKSPACE)
+                driver.find_element(By.NAME, "ingrediente").send_keys("Un hotdog" + Keys.ENTER)
+                driver.find_element(By.NAME, "paso").send_keys(Keys.SHIFT +  Keys.UP)
+                driver.find_element(By.NAME, "paso").send_keys(Keys.BACKSPACE)
+                driver.find_element(By.NAME, "paso").send_keys("Hacer un hotdog" + Keys.ENTER)
+                driver.find_element(By.ID, "EditRecetaButton").click()
+    
+                time.sleep(4)
+
+def test_edit(edit_testing):
+    time.sleep(5)
+    element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
+    found = False
+    
+    for tarjeta in element:
+        if "HotDog italiano" in tarjeta.text:
+            imagen = tarjeta.find_element(By.CLASS_NAME, "Imagen")
+            assert imagen.get_attribute("src") == "https://static.onecms.io/wp-content/uploads/sites/19/2017/06/05/elcompleto.jpg"
+            time.sleep(2)
+            break
+    if not found:
+        assert False
 
 @pytest.fixture()
 def delete_testing(testSetup):
 
-    time.sleep(10)
+    time.sleep(5)
 
     elements = driver.find_elements(By.CLASS_NAME, "Tarjeta")
-    print(f"CHUPALO TESTING QLO DE MIERDA\n")
-    print(f"{elements}\n")
     for tarjeta in elements:
         print(f"{tarjeta.text}\n")
-        if "Exo del Destiny" in tarjeta.text:
-            print(f"CHUPALO TESTING QLO DE MIERDA\n")
+        if "HotDog italiano" in tarjeta.text:
             tarjeta.find_element(By.ID, "MasButton").click()
 
             time.sleep(2)
@@ -67,15 +120,15 @@ def delete_testing(testSetup):
 
             time.sleep(2)
 
-            menu.find_element(By.ID, "BorrameLaWea").click()
+            menu.find_element(By.ID, "BorrarBoton").click()
 
             time.sleep(4)
 
 
 def test_delete(delete_testing):
-    
+    time.sleep(5)
     element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
 
     for tarjeta in element:
-        assert "Exo del Destiny" not in tarjeta.text
+        assert "HotDog italiano" not in tarjeta.text
         time.sleep(2)

@@ -172,8 +172,8 @@ class CardComponent extends React.Component {
             "aria-labelledby": "basic-button",
           }}
         >
-          <MenuItem onClick={this.handleOpen}>Editar</MenuItem>
-          <MenuItem id="BorrameLaWea" onClick={this.handleDelete}>Borrar</MenuItem>
+          <MenuItem id="EditarBoton" onClick={this.handleOpen}>Editar</MenuItem>
+          <MenuItem id="BorrarBoton" onClick={this.handleDelete}>Borrar</MenuItem>
         </Menu>
         <Card id="Card">
           {/* Cambiar la X por un botón de Delete*/}
@@ -201,6 +201,7 @@ class CardComponent extends React.Component {
           <CardMedia
             component="img"
             height="194"
+            className="Imagen"
             image={recipe.image}
             alt={recipe.title}
           />
@@ -397,6 +398,7 @@ class CardComponent extends React.Component {
               <Grid item xs={16}>
                 <Button
                   fullWidth
+                  id="EditRecetaButton"
                   variant="contained"
                   type="submit"
                   onClick={(e) => this.handleSubmit(e)}
