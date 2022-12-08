@@ -14,6 +14,6 @@ def testSetup():
     
 
 def testGet(testSetup):
-    driver.get('http://44.202.138.175:3000/')
+    driver.get('http://3.89.112.53:3000/')
     element = driver.find_element(By.CLASS_NAME, "Tarjeta").text
     assert "Prueba de carne" in element
