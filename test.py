@@ -65,9 +65,11 @@ def test_add(add_testing):
 @pytest.fixture()
 def edit_testing(testSetup):
     try:
+
+        time.sleep(5)
+
         elements = driver.find_elements(By.CLASS_NAME, "Tarjeta")
         for tarjeta in elements:
-            print(f"{tarjeta.text}\n")
             if "Completo italiano" in tarjeta.text:
                 tarjeta.find_element(By.ID, "MasButton").click()
     
@@ -129,7 +131,6 @@ def delete_testing(testSetup):
 
         elements = driver.find_elements(By.CLASS_NAME, "Tarjeta")
         for tarjeta in elements:
-            print(f"{tarjeta.text}\n")
             if "HotDog italiano" in tarjeta.text:
                 tarjeta.find_element(By.ID, "MasButton").click()
 
