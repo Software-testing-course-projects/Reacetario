@@ -64,7 +64,7 @@ class Home extends Component {
   };
   async componentDidMount() {
     await axios
-      .get("http://44.211.209.215:4000/recipes")
+      .get("http://3.89.112.53:4000/recipes")
       .catch((err) => console.log(err.toJSON()))
       .then((res) => {
         this.setState({ recipes: res.data.message });
@@ -82,7 +82,7 @@ class Home extends Component {
       steps: this.state.pasos,
     };
     await axios
-      .post("http://44.211.209.215:4000/recipes", newRecipe)
+      .post("http://3.89.112.53:4000/recipes", newRecipe)
       .catch(function (error) {
         console.log(error.toJSON());
       })
@@ -95,7 +95,7 @@ class Home extends Component {
   handleDeleteRecipe = async (id) => {
     console.log(id);
     await axios
-      .delete("http://44.211.209.215:4000/recipes/" + id)
+      .delete("http://3.89.112.53:4000/recipes/" + id)
       .catch(function (error) {
         console.log(error.toJSON());
       })
@@ -159,6 +159,7 @@ class Home extends Component {
           }}
         >
           <Fab
+            id="Addbutton"
             aria-label="add"
             onClick={this.handleOpen}
             sx={{
@@ -340,6 +341,7 @@ class Home extends Component {
                   })}
                   <Grid item xs={16}>
                     <Button
+                      id="AddRecetaButton"
                       fullWidth
                       variant="contained"
                       type="submit"
