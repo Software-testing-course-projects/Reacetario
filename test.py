@@ -23,39 +23,46 @@ def testSetup():
 @pytest.fixture()
 def add_testing(testSetup):
     # Clickear en un elemento, usando ID.
+    try:
 
-    driver.find_element(By.ID, "Addbutton").click()
+        driver.find_element(By.ID, "Addbutton").click()
 
-    # Testing Add Receta
+        # Testing Add Receta
 
 
-    driver.find_element(By.ID, "titulo").send_keys("Completo italiano" + Keys.ENTER)
-    driver.find_element(By.ID, "descripcion").send_keys("Completito" + Keys.ENTER)
-    driver.find_element(By.ID, "image").send_keys("https://upload.wikimedia.org/wikipedia/commons/e/e0/Completo_italiano.jpg" + Keys.ENTER)
-    driver.find_element(By.NAME, "ingrediente").send_keys("Un completo" + Keys.ENTER)
-    driver.find_element(By.NAME, "paso").send_keys("Hacer un completo" + Keys.ENTER)
-    driver.find_element(By.ID, "AddRecetaButton").click()
+        driver.find_element(By.ID, "titulo").send_keys("Completo italiano" + Keys.ENTER)
+        driver.find_element(By.ID, "descripcion").send_keys("Completito" + Keys.ENTER)
+        driver.find_element(By.ID, "image").send_keys("https://upload.wikimedia.org/wikipedia/commons/e/e0/Completo_italiano.jpg" + Keys.ENTER)
+        driver.find_element(By.NAME, "ingrediente").send_keys("Un completo" + Keys.ENTER)
+        driver.find_element(By.NAME, "paso").send_keys("Hacer un completo" + Keys.ENTER)
+        driver.find_element(By.ID, "AddRecetaButton").click()
 
-    time.sleep(2)
+        time.sleep(2)
+    except:
+        assert False
 
 def test_add(add_testing):
-    time.sleep(5)
+    try:
+        time.sleep(5)
 
-    element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
-    found = False
-    for tarjeta in element:
-        if "Completo italiano" in tarjeta.text:
-            found = True
-            imagen = tarjeta.find_element(By.CLASS_NAME, "Imagen")
-            assert imagen.get_attribute("src") == "https://upload.wikimedia.org/wikipedia/commons/e/e0/Completo_italiano.jpg"
-            time.sleep(2)
-            break
-    if not found:
+        element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
+        found = False
+        for tarjeta in element:
+            if "Completo italiano" in tarjeta.text:
+                found = True
+                imagen = tarjeta.find_element(By.CLASS_NAME, "Imagen")
+                assert imagen.get_attribute("src") == "https://upload.wikimedia.org/wikipedia/commons/e/e0/Completo_italiano.jpg"
+                time.sleep(2)
+                break
+        if not found:
+            assert False
+    except:
         assert False
     
 
 @pytest.fixture()
 def edit_testing(testSetup):
+    try:
         elements = driver.find_elements(By.CLASS_NAME, "Tarjeta")
         for tarjeta in elements:
             print(f"{tarjeta.text}\n")
@@ -88,47 +95,59 @@ def edit_testing(testSetup):
                 driver.find_element(By.ID, "EditRecetaButton").click()
     
                 time.sleep(4)
+                break
+    except:
+        assert False
 
 def test_edit(edit_testing):
-    time.sleep(5)
-    element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
-    found = False
-    
-    for tarjeta in element:
-        if "HotDog italiano" in tarjeta.text:
-            imagen = tarjeta.find_element(By.CLASS_NAME, "Imagen")
-            assert imagen.get_attribute("src") == "https://static.onecms.io/wp-content/uploads/sites/19/2017/06/05/elcompleto.jpg"
-            time.sleep(2)
-            break
-    if not found:
+    try:
+        time.sleep(5)
+        element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
+        found = False
+        
+        for tarjeta in element:
+            if "HotDog italiano" in tarjeta.text:
+                imagen = tarjeta.find_element(By.CLASS_NAME, "Imagen")
+                assert imagen.get_attribute("src") == "https://static.onecms.io/wp-content/uploads/sites/19/2017/06/05/elcompleto.jpg"
+                time.sleep(2)
+                break
+        if not found:
+            assert False
+    except:
         assert False
 
 @pytest.fixture()
 def delete_testing(testSetup):
+    try:
 
-    time.sleep(5)
+        time.sleep(5)
 
-    elements = driver.find_elements(By.CLASS_NAME, "Tarjeta")
-    for tarjeta in elements:
-        print(f"{tarjeta.text}\n")
-        if "HotDog italiano" in tarjeta.text:
-            tarjeta.find_element(By.ID, "MasButton").click()
+        elements = driver.find_elements(By.CLASS_NAME, "Tarjeta")
+        for tarjeta in elements:
+            print(f"{tarjeta.text}\n")
+            if "HotDog italiano" in tarjeta.text:
+                tarjeta.find_element(By.ID, "MasButton").click()
 
-            time.sleep(2)
+                time.sleep(2)
 
-            menu = driver.find_element(By.ID, "basic-menu")
+                menu = driver.find_element(By.ID, "basic-menu")
 
-            time.sleep(2)
+                time.sleep(2)
 
-            menu.find_element(By.ID, "BorrarBoton").click()
+                menu.find_element(By.ID, "BorrarBoton").click()
 
-            time.sleep(4)
+                time.sleep(4)
+    except:
+        assert False
 
 
 def test_delete(delete_testing):
-    time.sleep(5)
-    element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
+    try:
+        time.sleep(5)
+        element = driver.find_elements(By.CLASS_NAME, "Tarjeta")
 
-    for tarjeta in element:
-        assert "HotDog italiano" not in tarjeta.text
-        time.sleep(2)
+        for tarjeta in element:
+            assert "HotDog italiano" not in tarjeta.text
+            time.sleep(2)
+    except:
+        assert False
