@@ -10,7 +10,7 @@ export function addRecipe(recipe) {
   }
 
   axios
-    .post("http://44.211.209.215:4000/recipes", payload)
+    .post("http://44.202.138.175:4000/recipes", payload)
     .catch(function (error) {
       console.log(error.toJSON());
     })

@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 import time
 import pytest
 
-URL = "http://44.211.209.215:3000/"
+URL = "http://44.202.138.175:3000/"
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
