@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="23.140" timestamp="2022-12-07T21:51:47.099625" hostname="MacBook-Air-de-Javier.local"><testcase classname="test" name="testGet" time="23.083" /></testsuite></testsuites>
