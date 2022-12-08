@@ -5,8 +5,6 @@ import time
 import pytest
 
 @pytest.fixture()
-
-
 def testSetup():
     URL = "http://3.89.112.53:3000/"
     URL_LOCAL = "http://localhost:3000"
