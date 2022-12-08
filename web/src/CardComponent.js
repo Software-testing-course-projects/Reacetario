@@ -173,7 +173,7 @@ class CardComponent extends React.Component {
           }}
         >
           <MenuItem onClick={this.handleOpen}>Editar</MenuItem>
-          <MenuItem onClick={this.handleDelete}>Borrar</MenuItem>
+          <MenuItem id="BorrameLaWea" onClick={this.handleDelete}>Borrar</MenuItem>
         </Menu>
         <Card id="Card">
           {/* Cambiar la X por un botón de Delete*/}
@@ -183,6 +183,7 @@ class CardComponent extends React.Component {
             }
             action={
               <IconButton
+                id="MasButton"
                 aria-label="settings"
                 onClick={(e) => this.handleClick(e)}
               >
